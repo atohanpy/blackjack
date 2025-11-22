@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quantum Miner - Digital Economy</title>
+    
+    <!-- Google Font: Rajdhani (Temiz, Dijital) -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome (İkonlar) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CORE STYLES --- */
+        :root {
+            --color-primary: #FF8C00; /* Koyu Turuncu/Amber */
+            --color-secondary: #00BFFF; /* Mavi */
+            --color-bg: #1C2030; /* Koyu Mavi-Gri */
+            --color-panel: #262B40; 
+            --color-text: #E0E0E0;
+            --color-success: #00FF7F;
+            --color-error: #FF4500;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: var(--color-bg);
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--color-text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        /* --- UI ELEMENTS --- */
+
+        /* HUD - Üst Bar */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--color-panel);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        .balance-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            line-height: 1;
+        }
+        .mps-text {
+            font-size: 0.9rem;
+            color: var(--color-success);
+            font-weight: 600;
+        }
+        .core-text {
+            text-align: right;
+            font-size: 1.1rem;
+            color: var(--color-secondary);
+        }
+        .core-text i { margin-right: 5px; }
+
+        /* Ana Tıklama Alanı */
+        .game-stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #main-coin {
+            width: 200px;
+            height: 200px;
+            background: #FFD700; /* Altın Rengi */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: #333;
+            box-shadow: 0 0 40px rgba(255, 140, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.5);
+            transition: transform 0.05s ease-out;
+            cursor: pointer;
+            position: relative;
+        }
+        #main-coin:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 20px var(--color-primary), inset 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Alt Navigasyon */
+        .bottom-nav {
+            display: flex;
+            background: var(--color-panel);
+            border-radius: 15px;
+            padding: 5px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+            margin-top: 10px;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            color: var(--color-text);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .nav-btn i { font-size: 1.2rem; margin-bottom: 3px; }
+        .nav-btn.active {
+            background: var(--color-primary);
+            color: var(--color-bg);
+            box-shadow: 0 0 10px var(--color-primary);
+        }
+
+        /* Genel Panel (Modal) Stilleri */
+        .panel-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 50;
+            display: none;
+            padding-top: 50px;
+            padding-bottom: 80px;
+        }
+        .panel {
+            width: 95%; height: 100%;
+            margin: 0 auto;
+            background: var(--color-panel);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            display: flex; flex-direction: column;
+        }
+        .panel-header {
+            padding: 15px 20px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .close-btn { background: none; border: none; color: var(--color-error); font-size: 1.8rem; cursor: pointer; }
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        /* Liste Öğeleri */
+        .upgrade-item {
+            display: flex;
+            align-items: center;
+            background: #333955;
+            margin-bottom: 8px;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid var(--color-error);
+            transition: 0.2s;
+            opacity: 0.8;
+        }
+        .upgrade-item.can-buy { 
+            border-left-color: var(--color-success); 
+            opacity: 1; 
+            cursor: pointer; 
+            background: #333955 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="rgba(0,255,127,0.05)"/></svg>');
+        }
+        .upgrade-item.can-buy:active { transform: scale(0.98); }
+        
+        .u-icon { width: 40px; height: 40px; margin-right: 15px; background: #444b66; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .u-info { flex: 1; }
+        .u-name { font-weight: 700; font-size: 1.1rem; color: white;}
+        .u-desc { font-size: 0.8rem; color: #a0a0a0; }
+        .u-cost { font-weight: 700; font-size: 1rem; color: var(--color-primary); text-align: right; }
+        .u-lvl { font-size: 0.7rem; color: #777; display: block; text-align: right;}
+
+        /* Floater (Yüzen Sayılar) */
+        .floater {
+            position: absolute;
+            color: var(--color-primary);
+            font-weight: 900;
+            font-size: 1.8rem;
+            pointer-events: none;
+            animation: floatUp 1s forwards;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.7);
+            z-index: 100;
+        }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.2); opacity: 0; } }
+
+        /* Durum Çubuğu */
+        .status-bar {
+            padding: 15px;
+            background: var(--color-panel);
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .status-line { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .status-label { font-size: 0.9rem; color: #aaa; }
+        .status-value { font-size: 1rem; font-weight: 600; color: white; }
+        .status-value.red { color: var(--color-error); }
+        .status-value.green { color: var(--color-success); }
+    </style>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <!-- HUD -->
+        <div class="hud">
+            <div>
+                <span class="balance-display" id="display-balance">0</span>
+                <span class="mps-text" id="display-mps">0 / sn</span>
+            </div>
+            <div class="core-text">
+                <i class="fas fa-microchip"></i> QUANTUM CORE: <span id="display-cores">0</span>
+            </div>
+        </div>
+
+        <!-- Oyun Sahnesi -->
+        <div class="game-stage">
+            <div id="main-coin"><i class="fas fa-btc"></i></div>
+            <div class="status-bar" style="width: 80%; text-align: center;">
+                <div class="status-line">
+                    <span class="status-label">Toplam Verimlilik:</span>
+                    <span class="status-value" id="display-efficiency">100%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alt Navigasyon -->
+        <div class="bottom-nav">
+            <div class="nav-btn active" id="btn-hardware" onclick="openPanel('hardware', this)"><i class="fas fa-hammer"></i> Donanım</div>
+            <div class="nav-btn" id="btn-power" onclick="openPanel('power', this)"><i class="fas fa-bolt"></i> Enerji</div>
+            <div class="nav-btn" id="btn-research" onclick="openPanel('research', this)"><i class="fas fa-flask"></i> Araştırma</div>
+            <div class="nav-btn" id="btn-prestige" onclick="openPanel('prestige', this)"><i class="fas fa-infinity"></i> Yükseliş</div>
+        </div>
+    </div>
+
+    <!-- PANELLER -->
+    <div class="panel-container" id="panel-container">
+        
+        <!-- 1. Donanım Paneli -->
+        <div id="panel-hardware" class="panel">
+            <div class="panel-header">
+                MİNİNG RIG (VERİ MADENCİLİĞİ)
+                <button class="close-btn" onclick="closePanels()">×</button>
+            </div>
+            <div class="panel-content" id="hardware-list">
+                <!-- JS ile doldurulacak -->
+            </div>
+        </div>
+
+        <!-- 2. Enerji Paneli (Enerji ve Soğutma İçerir) -->
+        <div id="panel-power" class="panel">
+            <div class="panel-header">
+                ENERJİ VE SOĞUTMA SİSTEMİ
+                <button class="close-btn" onclick="closePanels()">×</button>
+            </div>
+            <div class="panel-content">
+                <p style="color:var(--color-secondary); font-weight:600; font-size:1.1rem; margin-bottom:10px;">GÜÇ ÜRETİMİ (Maks. Üretim Limiti)</p>
+                <div id="energy-list"></div>
+                
+                <p style="color:var(--color-secondary); font-weight:600; font-size:1.1rem; margin-top:20px; margin-bottom:10px;">SOĞUTMA (Verimlilik Koruyucu)</p>
+                <div id="cooling-list"></div>
+                
+                <div class="status-bar">
+                    <div class="status-line">
+                        <span class="status-label">Toplam Güç Üretimi:</span>
+                        <span class="status-value" id="display-energy">0 kW</span>
+                    </div>
+                    <div class="status-line">
+                        <span class="status-label">Toplam Güç Talebi:</span>
+                        <span class="status-value" id="display-demand">0 kW</span>
+                    </div>
+                    <div class="status-line">
+                        <span class="status-label">Soğutma Kapasitesi:</span>
+                        <span class="status-value" id="display-cooling">100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3. Araştırma Paneli (Kalıcı Yükseltmeler) -->
+        <div id="panel-research" class="panel">
+            <div class="panel-header">
+                ARAŞTIRMA LABORATUVARI
+                <button class="close-btn" onclick="closePanels()">×</button>
+            </div>
+            <div class="panel-content" id="research-list">
+                <p style="color:var(--color-secondary); margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">
+                    Quantum Core'lar (⚡) ile kalıcı yükseltmeler satın alın. Bu yükseltmeler Yükseliş (Prestige) sonrası kalır.
+                </p>
+                <!-- JS ile doldurulacak -->
+            </div>
+        </div>
+
+        <!-- 4. Yükseliş Paneli (Prestige) -->
+        <div id="panel-prestige" class="panel">
+            <div class="panel-header" style="color: var(--color-secondary);">
+                KUANTUM YÜKSELİŞİ (REBOOT)
+                <button class="close-btn" onclick="closePanels()">×</button>
+            </div>
+            <div class="panel-content" style="text-align:center;">
+                <i class="fas fa-infinity" style="font-size: 4rem; color: var(--color-secondary); margin: 20px 0;"></i>
+                <h2 style="color:white; font-size:1.5rem;">SİSTEM SIFIRLAMA PROTOKOLÜ</h2>
+                <p style="color:#aaa; margin-bottom:20px;">
+                    Tüm donanımlarınızı, enerjinizi ve biriktirdiğiniz tüm paranızı feda edin. Karşılığında, Araştırma Laboratuvarı'nda kullanmak üzere kalıcı **Quantum Core**'lar kazanın.
+                </p>
+                <div class="status-bar" style="border-left: 5px solid var(--color-primary);">
+                    <div class="status-line">
+                        <span class="status-label">Kazanılacak Core Sayısı:</span>
+                        <span class="status-value" id="prestige-gain" style="color: var(--color-primary); font-size:1.5rem;">0</span>
+                    </div>
+                </div>
+                <button id="prestige-button" onclick="doPrestige()" style="background: var(--color-secondary); color:var(--color-bg); border:none; padding:15px 40px; font-size:1.2rem; font-weight:bold; border-radius:10px; width:100%; margin-top:20px;">YÜKSELİŞİ BAŞLAT</button>
+                <p style="color:#777; font-size:0.8rem; margin-top:10px;">(İlk Core için 100K BTC gereklidir)</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* --- OYUN VERİLERİ VE YAPILANDIRMA --- */
+
+        // Donanım (Hardware) - BTC üretimi için temel motor
+        const HARDWARE_DB = [
+            { id: 0, name: 'Mini ASIC Kartı', baseCost: 15, baseProd: 2, powerDemand: 1, icon: 'fas fa-microchip', desc: 'Başlangıç için yeterli.' },
+            { id: 1, name: 'Orta Seviye Rig', baseCost: 100, baseProd: 10, powerDemand: 5, icon: 'fas fa-server', desc: 'Daha hızlı, daha fazla güç çeker.' },
+            { id: 2, name: 'Veri Merkezi Bloğu', baseCost: 1100, baseProd: 80, powerDemand: 40, icon: 'fas fa-database', desc: 'Ciddi yatırım, ciddi tüketim.' },
+            { id: 3, name: 'Okyanus Sunucu', baseCost: 12000, baseProd: 450, powerDemand: 250, icon: 'fas fa-water', desc: 'Doğal soğutma kullanır.' },
+            { id: 4, name: 'Kuantum Çiftlik', baseCost: 130000, baseProd: 2200, powerDemand: 1500, icon: 'fas fa-atom', desc: 'Geleceğin kazımı.' }
+        ];
+
+        // Enerji Santralleri (Power) - Donanımı besler, kW üretir
+        const ENERGY_DB = [
+            { id: 0, name: 'Güneş Paneli', baseCost: 50, baseProd: 10, icon: 'fas fa-solar-panel', desc: 'Temiz enerji, düşük üretim.' },
+            { id: 1, name: 'Rüzgar Türbini', baseCost: 500, baseProd: 75, icon: 'fas fa-fan', desc: 'Daha büyük, daha güçlü.' },
+            { id: 2, name: 'Nükleer Reaktör', baseCost: 5000, baseProd: 500, icon: 'fas fa-radiation', desc: 'Yüksek risk, devasa güç.' }
+        ];
+
+        // Soğutma Sistemleri (Cooling) - Güç Talebinin etkisini azaltır
+        const COOLING_DB = [
+            { id: 0, name: 'Kasa Fanı', baseCost: 200, factor: 0.95, icon: 'fas fa-wind', desc: 'Talebi %5 azaltır.' },
+            { id: 1, name: 'Sıvı Soğutma', baseCost: 2000, factor: 0.85, icon: 'fas fa-temperature-low', desc: 'Talebi %15 azaltır.' },
+            { id: 2, name: 'Cryo-Sistem', baseCost: 20000, factor: 0.70, icon: 'fas fa-snowflake', desc: 'Talebi %30 azaltır.' }
+        ];
+
+        // Araştırma (Research) - Core ile alınan kalıcı yükseltmeler
+        const RESEARCH_DB = [
+            { id: 0, name: 'Verimli Algoritma', cost: 1, effect: 1.1, type: 'prodMult', icon: 'fas fa-brain', desc: 'Tüm üretimi %10 artırır.' },
+            { id: 1, name: 'Otomatik Tıklama Botu', cost: 5, effect: 5, type: 'clickPower', icon: 'fas fa-robot', desc: 'Tıklama gücünü 5 katına çıkarır.' },
+            { id: 2, name: 'Süper İletkenler', cost: 10, effect: 0.9, type: 'demandReduction', icon: 'fas fa-plug', desc: 'Tüm güç talebini %10 azaltır (Kalıcı).' }
+        ];
+
+        /* --- OYUN STATE (DURUM) --- */
+        let state = {
+            balance: 0,
+            cores: 0,
+            hardware: Array(HARDWARE_DB.length).fill(0),
+            energy: Array(ENERGY_DB.length).fill(0),
+            cooling: Array(COOLING_DB.length).fill(0),
+            research: Array(RESEARCH_DB.length).fill(false), // boolean: alındı mı?
+            clickCount: 0
+        };
+
+        const NUM_SUFFIXES = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc"];
+
+        /* --- SİSTEM FONKSİYONLARI --- */
+        function formatNum(num) {
+            if (num < 1000) return Math.floor(num * 10) / 10;
+            const tier = Math.floor(Math.log10(num) / 3);
+            if (tier >= NUM_SUFFIXES.length) return num.toExponential(2); // Çok büyükse
+            const shortValue = (num / Math.pow(1000, tier));
+            return shortValue.toFixed(2) + NUM_SUFFIXES[tier];
+        }
+        
+        // Cost Hesaplayıcı
+        function getCost(baseCost, count, rate = 1.15) {
+            return Math.floor(baseCost * Math.pow(rate, count));
+        }
+
+        /* --- KAYIT/YÜKLEME --- */
+        function saveGame() { 
+            localStorage.setItem('QuantumMinerSave', JSON.stringify(state)); 
+        }
+        function loadGame() {
+            let s = localStorage.getItem('QuantumMinerSave');
+            if (s) {
+                const loadedState = JSON.parse(s);
+                // Yeni özellikler için veri yapılarını koru
+                state.balance = loadedState.balance || 0;
+                state.cores = loadedState.cores || 0;
+                state.hardware = loadedState.hardware || Array(HARDWARE_DB.length).fill(0);
+                state.energy = loadedState.energy || Array(ENERGY_DB.length).fill(0);
+                state.cooling = loadedState.cooling || Array(COOLING_DB.length).fill(0);
+                state.research = loadedState.research || Array(RESEARCH_DB.length).fill(false);
+            }
+        }
+
+        /* --- ÜRETİM HESAPLAMA (CORE LOGIC) --- */
+        
+        // 1. Research'ten gelen kalıcı çarpanları al
+        function getResearchBonus() {
+            let prodMult = 1;
+            let demandReduction = 1; // 1 = %0 azalma, 0.9 = %10 azalma
+            let clickMult = 1;
+
+            state.research.forEach((bought, idx) => {
+                if (bought) {
+                    const r = RESEARCH_DB[idx];
+                    if (r.type === 'prodMult') prodMult *= r.effect;
+                    if (r.type === 'demandReduction') demandReduction *= r.effect;
+                    if (r.type === 'clickPower') clickMult *= r.effect;
+                }
+            });
+            return { prodMult, demandReduction, clickMult };
+        }
+
+        // 2. Güç Üretimi ve Talebi Hesapla
+        function getPowerStats() {
+            let totalProduction = 0;
+            state.energy.forEach((count, idx) => {
+                totalProduction += count * ENERGY_DB[idx].baseProd;
+            });
+
+            let baseDemand = 0;
+            state.hardware.forEach((count, idx) => {
+                baseDemand += count * HARDWARE_DB[idx].powerDemand;
+            });
+
+            // Soğutma Kapasitesi (Cooling Modifier)
+            let coolingModifier = 1; 
+            state.cooling.forEach((count, idx) => {
+                if (count > 0) coolingModifier *= Math.pow(COOLING_DB[idx].factor, count);
+            });
+            
+            const research = getResearchBonus();
+            let effectiveDemand = baseDemand * coolingModifier * research.demandReduction;
+
+            return { totalProduction, effectiveDemand, coolingModifier };
+        }
+
+        // 3. Verimlilik (Efficiency) Hesapla
+        function getEfficiency(powerStats) {
+            // Eğer talep yoksa (0), %100 verimlilik.
+            if (powerStats.effectiveDemand === 0) return 1; 
+            
+            // Üretim / Talep. Max 1 (%100) olabilir.
+            let efficiency = Math.min(1, powerStats.totalProduction / powerStats.effectiveDemand);
+            
+            // Eğer verimlilik %50'nin altındaysa bir miktar daha düşür (Cezalandırıcı Mekanik)
+            if (efficiency < 0.5) efficiency *= 0.8; 
+
+            return efficiency;
+        }
+
+        // 4. Nihai MPS (Saniyedeki Para) Hesapla
+        function getMPS() {
+            const powerStats = getPowerStats();
+            const efficiency = getEfficiency(powerStats);
+            const research = getResearchBonus();
+
+            let hardwareBaseMPS = 0;
+            state.hardware.forEach((count, idx) => {
+                hardwareBaseMPS += count * HARDWARE_DB[idx].baseProd;
+            });
+
+            let finalMPS = hardwareBaseMPS * research.prodMult * efficiency;
+            return finalMPS;
+        }
+
+        // 5. Tıklama Gücü Hesapla
+        function getClickPower() {
+            const research = getResearchBonus();
+            // Tıklama Gücü: 1 + (Toplam MPS'nin %1'i) * Araştırma Çarpanı
+            let base = 1 + (getMPS() * 0.01); 
+            return Math.floor(base * research.clickMult); 
+        }
+
+        /* --- UI GÜNCELLEME DÖNGÜSÜ --- */
+        function updateUI() {
+            const mps = getMPS();
+            const powerStats = getPowerStats();
+            const efficiency = getEfficiency(powerStats);
+
+            // Pasif Gelir Ekle
+            state.balance += mps / 30; // 30 FPS varsayımı
+
+            // HUD Güncelleme
+            document.getElementById('display-balance').innerText = formatNum(state.balance) + " BTC";
+            document.getElementById('display-mps').innerText = formatNum(mps) + " / sn";
+            document.getElementById('display-cores').innerText = state.cores;
+            
+            // Verimlilik Çubuğu
+            const effText = (efficiency * 100).toFixed(1) + "%";
+            const effEl = document.getElementById('display-efficiency');
+            effEl.innerText = effText;
+            effEl.className = `status-value ${efficiency < 0.8 ? 'red' : 'green'}`;
+
+            // Prestige Potansiyeli
+            let potentialCores = Math.floor(Math.sqrt(state.balance / 100000));
+            document.getElementById('prestige-gain').innerText = potentialCores;
+            document.getElementById('prestige-button').disabled = potentialCores === 0;
+
+            // Power/Cooling Panelindeki Statları Güncelle
+            document.getElementById('display-energy').innerText = formatNum(powerStats.totalProduction) + " kW";
+            document.getElementById('display-demand').innerText = formatNum(powerStats.effectiveDemand) + " kW";
+            document.getElementById('display-cooling').innerText = ((1 - powerStats.coolingModifier) * 100).toFixed(0) + "% Azaltma";
+        }
+
+        /* --- TIKLAMA VE EFEKTLER --- */
+        const coinBtn = document.getElementById('main-coin');
+        coinBtn.addEventListener('pointerdown', (e) => {
+            let amount = getClickPower();
+            state.balance += amount;
+
+            spawnFloatingText(e.clientX, e.clientY, "+" + formatNum(amount));
+            if(navigator.vibrate) navigator.vibrate(5);
+        });
+
+        function spawnFloatingText(x, y, txt) {
+            let el = document.createElement('div');
+            el.className = 'floater';
+            el.innerText = txt;
+            
+            let rX = (Math.random() - 0.5) * 50;
+            let rY = (Math.random() * 20) - 10;
+            el.style.left = (x + rX) + 'px';
+            el.style.top = (y + rY) + 'px';
+            
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        /* --- SATIN ALMA İŞLEMLERİ --- */
+
+        // Genel Satın Alma Fonksiyonu
+        function buyGeneric(db, stateArray, index, rate = 1.15, costType = 'balance') {
+            const currentCount = stateArray[index];
+            const cost = getCost(db[index].baseCost, currentCount, rate);
+
+            if (costType === 'balance' && state.balance >= cost) {
+                state.balance -= cost;
+                stateArray[index]++;
+                saveGame();
+                renderAllPanels();
+            } else if (costType === 'cores' && state.cores >= cost) {
+                state.cores -= cost;
+                stateArray[index] = true; // Research sadece bir kere alınır
+                saveGame();
+                renderAllPanels();
+            } else {
+                // Not: Hata mesajı için alert yerine konsol logu kullanıldı
+                console.warn("Yeterli para/core yok!"); 
+            }
+        }
+
+        // Donanım (Hardware) Satın Alma
+        function buyHardware(id) { buyGeneric(HARDWARE_DB, state.hardware, id); }
+        
+        // Enerji (Power) Satın Alma
+        function buyEnergy(id) { buyGeneric(ENERGY_DB, state.energy, id); }
+
+        // Soğutma (Cooling) Satın Alma
+        function buyCooling(id) { buyGeneric(COOLING_DB, state.cooling, id); }
+
+        // Araştırma (Research) Satın Alma (Core ile)
+        function buyResearch(id) {
+            if (!state.research[id]) { // Sadece bir kere al
+                const cost = RESEARCH_DB[id].cost;
+                if (state.cores >= cost) {
+                    state.cores -= cost;
+                    state.research[id] = true;
+                    saveGame();
+                    renderAllPanels();
+                    // Mesaj göster
+                    const r = RESEARCH_DB[id];
+                    alert(`${r.name} Araştırması Tamamlandı! Etki: ${r.desc}`);
+                } else {
+                     console.warn("Yeterli Quantum Core yok!");
+                }
+            }
+        }
+
+        /* --- PANEL RENDER FONKSİYONLARI --- */
+
+        function renderList(db, stateArray, listId, buyFn, costType = 'balance') {
+            const listEl = document.getElementById(listId);
+            listEl.innerHTML = '';
+            const isCores = costType === 'cores';
+
+            db.forEach((item, idx) => {
+                const currentCount = stateArray[idx];
+                let cost, canBuy, clickAction, disabled;
+                
+                if (isCores) {
+                    cost = item.cost;
+                    canBuy = state.cores >= cost && !currentCount;
+                    disabled = currentCount;
+                    clickAction = `buyResearch(${idx})`;
+                } else {
+                    cost = getCost(item.baseCost, currentCount);
+                    canBuy = state.balance >= cost;
+                    clickAction = `${buyFn.name}(${idx})`;
+                    disabled = false;
+                }
+
+                let extraInfo = '';
+                if(listId === 'hardware-list') extraInfo = ` (+${formatNum(item.baseProd)}/sn | Talep: ${formatNum(item.powerDemand)}kW)`;
+                if(listId === 'energy-list') extraInfo = ` (+${formatNum(item.baseProd)}kW Üretim)`;
+                if(listId === 'cooling-list') extraInfo = ` (Talep %${Math.floor((1 - item.factor) * 100)} azaltma)`;
+                if(listId === 'research-list' && isCores && currentCount) extraInfo = ' - TAMAMLANDI';
+
+
+                const costIcon = isCores ? `<i class="fas fa-microchip"></i>` : `<i class="fas fa-bitcoin"></i>`;
+                const costDisplay = isCores ? cost : formatNum(cost);
+                const lvlDisplay = isCores ? (disabled ? 'ALINDI' : 'Core') : `Lvl ${currentCount}`;
+
+                const icon = item.icon.startsWith('fas') ? `<i class="${item.icon}"></i>` : item.icon;
+
+                listEl.innerHTML += `
+                    <div class="upgrade-item ${canBuy ? 'can-buy' : (disabled ? 'disabled' : '')}" ${canBuy ? `onclick="${clickAction}"` : ''}>
+                        <div class="u-icon">${icon}</div>
+                        <div class="u-info">
+                            <div class="u-name">${item.name}</div>
+                            <div class="u-desc">${item.desc} ${extraInfo}</div>
+                        </div>
+                        <div>
+                            <div class="u-cost">${costIcon} ${costDisplay}</div>
+                            <div class="u-lvl">${lvlDisplay}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        function renderAllPanels() {
+            renderList(HARDWARE_DB, state.hardware, 'hardware-list', buyHardware);
+            renderList(ENERGY_DB, state.energy, 'energy-list', buyEnergy);
+            renderList(COOLING_DB, state.cooling, 'cooling-list', buyCooling);
+            renderList(RESEARCH_DB, state.research, 'research-list', buyResearch, 'cores');
+            updateUI();
+        }
+
+        /* --- PRESTIGE (YÜKSELİŞ) --- */
+        function doPrestige() {
+            let potentialCores = Math.floor(Math.sqrt(state.balance / 100000));
+            if (potentialCores > 0) {
+                if(confirm(`Quantum Yükselişi: ${potentialCores} yeni Core kazanmak üzeresin. Tüm birikimin ve donanımın sıfırlanacak. Emin misin?`)) {
+                    state.cores += potentialCores;
+                    state.balance = 0;
+                    state.hardware = Array(HARDWARE_DB.length).fill(0);
+                    state.energy = Array(ENERGY_DB.length).fill(0);
+                    state.cooling = Array(COOLING_DB.length).fill(0);
+                    state.clickCount = 0;
+                    saveGame();
+                    // Tekrar yükle (UI'ı sıfırlar ve temiz bir başlangıç yapar)
+                    renderAllPanels();
+                    closePanels();
+                }
+            } else {
+                alert("Yükseliş başlatmak için en az 100K BTC gereklidir!");
+            }
+        }
+
+        /* --- NAVİGASYON VE BAŞLANGIÇ --- */
+        let activePanel = 'hardware';
+
+        function openPanel(id, buttonEl) {
+            activePanel = id;
+            document.getElementById('panel-container').style.display = 'block';
+            
+            // Tüm butonları pasif yap
+            document.querySelectorAll('.bottom-nav .nav-btn').forEach(btn => btn.classList.remove('active'));
+            if(buttonEl) buttonEl.classList.add('active');
+
+            // Tüm panelleri gizle
+            document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+            // Aktif paneli göster
+            document.getElementById('panel-' + id).style.display = 'flex';
+
+            renderAllPanels(); // Açınca içeriği güncelleyelim
+        }
+
+        function closePanels() {
+            document.getElementById('panel-container').style.display = 'none';
+            // Navigasyon butonunu geri aktif yap
+            document.getElementById(`btn-${activePanel}`).classList.add('active');
+        }
+
+
+        // Başlatma Sırası
+        loadGame();
+        openPanel('hardware', document.getElementById('btn-hardware')); // İlk açılışta donanım panelini göster
+
+        // Ana Oyun Döngüsü (FPS kontrolü)
+        setInterval(updateUI, 1000 / 30); // Saniyede 30 kere güncelle
+        setInterval(saveGame, 10000); // 10 saniyede bir otomatik kaydet
+        
+    </script>
+</body>
+</html>
+
