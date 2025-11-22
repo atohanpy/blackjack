@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine Bitcoin! - TuffGames</title>
+    <meta name="description" content="Kendi kripto imparatorluğunu kur. Mine Bitcoin! resmi indirme sayfası.">
+    
+    <!-- Tailwind CSS (Hızlı Tasarım İçin) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome (İkonlar İçin) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&display=swap" rel="stylesheet">
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0b12;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Özel Arkaplan Efekti */
+        .bg-glow {
+            background: radial-gradient(circle at 50% 50%, rgba(247, 147, 26, 0.15) 0%, rgba(11, 11, 18, 1) 70%);
+        }
+
+        /* Buton Parıltısı */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn-shine:hover::after {
+            left: 100%;
+            transition: 0.5s ease-in-out;
+        }
+
+        /* Telefon Çerçevesi CSS */
+        .phone-mockup {
+            border: 12px solid #1a1a1a;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            aspect-ratio: 9/19;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 25px;
+            background: #1a1a1a;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 10;
+        }
+        .screen-content {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #1e1e2f 0%, #0f0f1a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* Yüzen Coin Animasyonu */
+        .floating-coin {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-orange-500 selection:text-white">
+
+    <!-- Arkaplan Parçacıkları (Görsel Efekt) -->
+    <div class="fixed inset-0 pointer-events-none bg-glow z-0"></div>
+
+    <!-- NAVBAR -->
+    <nav class="relative z-50 w-full px-6 py-4 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="flex items-center gap-2" data-aos="fade-down">
+            <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center text-black font-bold text-xl">
+                T
+            </div>
+            <span class="text-2xl font-bold tracking-wider">TuffGames</span>
+        </div>
+        <div class="hidden md:flex gap-6 text-gray-400 text-sm font-medium" data-aos="fade-down" data-aos-delay="100">
+            <a href="#features" class="hover:text-orange-500 transition">Özellikler</a>
+            <a href="#how-to" class="hover:text-orange-500 transition">Nasıl Oynanır?</a>
+            <a href="#download" class="hover:text-orange-500 transition">İndir</a>
+        </div>
+        <a href="#download" class="hidden md:block bg-white/10 hover:bg-white/20 px-5 py-2 rounded-full text-sm font-bold transition border border-white/10" data-aos="fade-down" data-aos-delay="200">
+            APK İndir
+        </a>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative z-10 pt-10 pb-20 px-6 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        
+        <!-- Sol Taraf: Yazılar -->
+        <div class="text-center md:text-left order-2 md:order-1">
+            <div class="inline-block px-4 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-bold mb-4 border border-orange-500/30" data-aos="fade-up">
+                🚀 YENİ SÜRÜM YAYINDA (v3.1)
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6" data-aos="fade-up" data-aos-delay="100">
+                Telefondan <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-500">Kripto İmparatorluğu</span> <br>
+                Kurmaya Başla.
+            </h1>
+            <p class="text-gray-400 text-lg mb-8 max-w-lg mx-auto md:mx-0" data-aos="fade-up" data-aos-delay="200">
+                Sıfırdan başla, donanımlarını yükselt, borsada risk al ve dünyanın en büyük madencisi ol. İnternet gerektirmez, tamamen ücretsiz.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start" data-aos="fade-up" data-aos-delay="300">
+                <!-- 
+                    BURASI ÖNEMLİ:
+                    Aşağıdaki href kısmına GitHub veya Vercel üzerindeki APK linkini yapıştır.
+                    Örnek: https://github.com/kullaniciadi/repo/raw/main/app-release.apk
+                -->
+                <a href="/app-release.apk" download class="btn-shine bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-orange-500/30 flex items-center justify-center gap-3 transform hover:scale-105 transition">
+                    <i class="fab fa-android text-2xl"></i>
+                    <span>Hemen İndir (.APK)</span>
+                </a>
+                <a href="#features" class="px-8 py-4 rounded-xl font-bold text-lg bg-white/5 border border-white/10 hover:bg-white/10 transition flex items-center justify-center">
+                    İncele
+                </a>
+            </div>
+            <p class="mt-4 text-xs text-gray-500 flex items-center justify-center md:justify-start gap-2">
+                <i class="fas fa-shield-alt text-green-500"></i> Virüs Taraması Yapıldı & Güvenli
+            </p>
+        </div>
+
+        <!-- Sağ Taraf: Telefon Mockup -->
+        <div class="order-1 md:order-2 flex justify-center" data-aos="zoom-in" data-aos-duration="1000">
+            <div class="phone-mockup floating-coin">
+                <div class="phone-notch"></div>
+                <div class="screen-content relative overflow-hidden">
+                    <!-- Oyun İçi Görünüm Simülasyonu -->
+                    <div class="absolute top-10 w-full text-center">
+                        <img src="https://img.icons8.com/?size=160&id=ovHld7NfgG9g&format=png" class="w-20 h-20 mx-auto mb-2 drop-shadow-lg">
+                        <div class="text-2xl font-bold text-white">1.2M ₿</div>
+                        <div class="text-green-400 text-sm">+450/sn</div>
+                    </div>
+                    
+                    <!-- Buton -->
+                    <div class="w-32 h-32 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 shadow-2xl flex items-center justify-center border-4 border-orange-300/20 mt-10">
+                        <i class="fas fa-hand-pointer text-4xl text-white/90"></i>
+                    </div>
+
+                    <!-- Alt Menü -->
+                    <div class="absolute bottom-0 w-full h-16 bg-[#161621] flex justify-around items-center border-t border-white/10">
+                         <i class="fas fa-hammer text-orange-500"></i>
+                         <i class="fas fa-shopping-cart text-gray-500"></i>
+                         <i class="fas fa-chart-line text-gray-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- İSTATİSTİKLER (Şerit) -->
+    <div class="w-full border-y border-white/5 bg-white/5 backdrop-blur-sm py-8">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div data-aos="fade-up" data-aos-delay="0">
+                <div class="text-3xl font-bold text-white mb-1">+10K</div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest">İndirme</div>
+            </div>
+            <div data-aos="fade-up" data-aos-delay="100">
+                <div class="text-3xl font-bold text-orange-500 mb-1">4.8</div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest">Puan</div>
+            </div>
+            <div data-aos="fade-up" data-aos-delay="200">
+                <div class="text-3xl font-bold text-white mb-1">%100</div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest">Ücretsiz</div>
+            </div>
+            <div data-aos="fade-up" data-aos-delay="300">
+                <div class="text-3xl font-bold text-blue-400 mb-1">Offline</div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest">İnternetsiz</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ÖZELLİKLER -->
+    <section id="features" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4">Sadece Tıklamak Değil, <br> <span class="text-orange-500">Yönetmek</span>.</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">Mine Bitcoin! sıradan bir clicker oyunundan fazlasıdır. İşte seni bekleyenler:</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Kart 1 -->
+            <div class="bg-[#151520] p-8 rounded-3xl border border-white/5 hover:border-orange-500/50 transition group" data-aos="fade-up" data-aos-delay="0">
+                <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-400 text-2xl mb-6 group-hover:scale-110 transition">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Gelişmiş Donanım</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    USB madencilerden devasa Kuantum Bilgisayarlara kadar uzanan 8 farklı teknoloji seviyesi.
+                </p>
+            </div>
+
+            <!-- Kart 2 -->
+            <div class="bg-[#151520] p-8 rounded-3xl border border-white/5 hover:border-orange-500/50 transition group" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-14 h-14 bg-red-500/20 rounded-2xl flex items-center justify-center text-red-400 text-2xl mb-6 group-hover:scale-110 transition">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Riskli Borsa</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Paranı riske atıp katlayabileceğin mini borsa oyunu. Yükselecek mi düşecek mi? Karar senin.
+                </p>
+            </div>
+
+            <!-- Kart 3 -->
+            <div class="bg-[#151520] p-8 rounded-3xl border border-white/5 hover:border-orange-500/50 transition group" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center text-purple-400 text-2xl mb-6 group-hover:scale-110 transition">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Hard Fork (Prestige)</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Oyun tıkandı mı? Sistemi sıfırla ve kalıcı güç çarpanlarıyla her şeye daha güçlü başla.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER / DOWNLOAD -->
+    <footer id="download" class="py-20 px-6 text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-orange-600/5 pointer-events-none"></div>
+        
+        <div class="relative z-10" data-aos="zoom-in">
+            <h2 class="text-4xl font-bold mb-6">Zengin Olmaya Hazır Mısın?</h2>
+            <p class="text-gray-400 mb-8">Google Play beklemene gerek yok. APK'yı indir ve hemen oyna.</p>
+            
+            <a href="/app-release.apk" download class="inline-flex items-center gap-3 bg-white text-black px-10 py-4 rounded-xl font-bold text-lg hover:bg-gray-200 transition shadow-lg hover:scale-105 transform">
+                <i class="fas fa-download"></i>
+                <span>İndir (Android APK)</span>
+            </a>
+            
+            <div class="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 max-w-4xl mx-auto">
+                <div>&copy; 2025 TuffGames. Tüm hakları saklıdır.</div>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-white">Gizlilik Politikası</a>
+                    <a href="#" class="hover:text-white">İletişim</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+</body>
+</html>
+
